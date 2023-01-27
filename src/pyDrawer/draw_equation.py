@@ -1,13 +1,9 @@
+import json
 import matplotlib.pyplot as plt
 import numpy as np
 
-a = 0.5
-b = 10
-c = -5
-
-ea = 0.493902
-eb = 9.9255
-ec = -4.56218
+filename = '/home/csl/CppWorks/artwork/ceres-utils/src/output/equation_before.json'
+savename = '/home/csl/CppWorks/artwork/ceres-utils/src/img/equation_before.png'
 
 # setting
 config = {
@@ -22,42 +18,65 @@ config = {
 }
 
 
-def read_points(filename):
-    points = []
-    lines = []
-    with open(filename) as file:
-        lines = file.readlines()
+def read_equation(filename):
+    file = open(filename, "r")
+    lines = file.readlines()
+    content = ''
     for line in lines:
-        elems = line.split(',')
-        points.append([float(elems[0]), float(elems[1])])
-    return points
+        content += line
+    array_buffer = json.loads(content)
+    h_matrix = array_buffer.get("h_matrix")
+    b_vector = array_buffer.get("b_vector")
+    param_info = []
+    for elem in array_buffer.get("param_blocks"):
+        name_dime = array_buffer.get("param_blocks").get(elem)
+        param_info.append([name_dime['name'], name_dime['dime']])
+    return [h_matrix, b_vector, param_info]
 
 
 if __name__ == '__main__':
     plt.rcParams.update(config)
-    plt.rcParams['figure.figsize'] = (8.0, 6.0)
+    plt.rcParams['figure.figsize'] = (15.0, 8.0)
+    [h_matrix, b_vector, param_info] = read_equation(filename)
 
-    # ground truth
-    mid = -b / (2 * a)
-    x = np.linspace(start=mid - 10, stop=mid + 10, num=50)
-    y = a * x * x + b * x + c
-    plt.plot(x, y, 'r-', lw=2, alpha=0.5, label=r"$y=ax^2+bx+c$")
+    # construct the equation
+    equation = h_matrix
+    for idx in range(len(b_vector)):
+        equation[idx].append(0.0)
+        equation[idx].append(b_vector[idx])
+    equation = np.array(equation)
 
-    # points
-    points = read_points("/home/csl/CppWorks/artwork/ceres-utils/src/output/points.txt")
-    plt.scatter([elem[0] for elem in points], [elem[1] for elem in points],
-                marker='o', c='g', alpha=0.5, label=r"points")
+    # mapping
+    equation = equation / np.abs(equation) * np.log10(np.abs(equation) + 1)
 
-    # estimate
-    mid = -eb / (2 * ea)
-    x = np.linspace(start=mid - 10, stop=mid + 10, num=50)
-    y = ea * x * x + eb * x + ec
-    plt.plot(x, y, 'b--', lw=2, alpha=0.5, label=r"$y=\hat{a}x^2+\hat{b}x+\hat{c}$")
+    # find value lim
+    max = np.max(equation)
+    min = np.min(equation)
+    val_max = np.max([np.abs(min), np.abs(max)])
 
-    plt.ylabel("y")
-    plt.xlabel("x")
-    plt.legend()
-    plt.title("Parabolic Fitting")
-    plt.grid(ls='-.', alpha=0.5)
-    plt.savefig("/home/csl/CppWorks/artwork/ceres-utils/src/img/parabolic_fitting.png")
+    # figure setting
+    ax = plt.axes()
+    ax.xaxis.set_ticks_position('top')
+    ax.invert_yaxis()
+    ax.axes.xaxis.set_visible(False)
+    ax.axes.yaxis.set_visible(False)
+    ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+    plt.pcolormesh(np.array(equation), cmap='RdBu_r', vmin=-val_max, vmax=val_max)
+    plt.colorbar()
+    count = 0
+    for idx in range(len(param_info) + 1):
+        plt.axvline(count, color='w', linestyle='-', linewidth=2)
+        plt.axhline(count, color='w', linestyle='-', linewidth=2)
+        if idx == len(param_info):
+            continue
+        count += param_info[idx][1]
+    for idx in range(len(h_matrix)):
+        plt.axvline(idx, color='w', linestyle='--', linewidth=1)
+        plt.axhline(idx, color='w', linestyle='--', linewidth=1)
+
+    plt.savefig(savename)
     plt.show()
