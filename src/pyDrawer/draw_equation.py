@@ -5,6 +5,9 @@ import numpy as np
 filename = '/home/csl/CppWorks/artwork/ceres-utils/src/output/equation_before.json'
 savename = '/home/csl/CppWorks/artwork/ceres-utils/src/img/equation_before.png'
 
+# ['PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu', 'RdYlBu', 'RdYlGn', 'Spectral', 'coolwarm', 'bwr', 'seismic']
+color_name = 'PiYG'
+
 # setting
 config = {
     # "text.usetex": True,
@@ -36,7 +39,7 @@ def read_equation(filename):
 
 if __name__ == '__main__':
     plt.rcParams.update(config)
-    plt.rcParams['figure.figsize'] = (15.0, 8.0)
+    plt.rcParams['figure.figsize'] = (12.0, 9.3)
     [h_matrix, b_vector, param_info] = read_equation(filename)
 
     # construct the equation
@@ -65,8 +68,8 @@ if __name__ == '__main__':
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
 
-    plt.pcolormesh(np.array(equation), cmap='RdBu_r', vmin=-val_max, vmax=val_max)
-    plt.colorbar()
+    plt.pcolormesh(np.array(equation), cmap=color_name, vmin=-val_max, vmax=val_max)
+    plt.colorbar(orientation='horizontal', pad=0.05)
     count = 0
     for idx in range(len(param_info) + 1):
         plt.axvline(count, color='w', linestyle='-', linewidth=2)
