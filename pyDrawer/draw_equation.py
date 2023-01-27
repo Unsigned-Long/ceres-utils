@@ -2,8 +2,8 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 
-filename = '/home/csl/CppWorks/artwork/ceres-utils/src/output/equation_before.json'
-savename = '/home/csl/CppWorks/artwork/ceres-utils/src/img/equation_before.png'
+filename = '../output/equation_before.json'
+savename = '../img/equation_before.png'
 
 # ['PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu', 'RdYlBu', 'RdYlGn', 'Spectral', 'coolwarm', 'bwr', 'seismic']
 color_name = 'PiYG'
@@ -39,7 +39,7 @@ def read_equation(filename):
 
 if __name__ == '__main__':
     plt.rcParams.update(config)
-    plt.rcParams['figure.figsize'] = (12.0, 9.3)
+    plt.rcParams['figure.figsize'] = (19.0, 10)
     [h_matrix, b_vector, param_info] = read_equation(filename)
 
     # construct the equation
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     ax.spines['right'].set_visible(False)
 
     plt.pcolormesh(np.array(equation), cmap=color_name, vmin=-val_max, vmax=val_max)
-    plt.colorbar(orientation='horizontal', pad=0.05)
+    plt.colorbar()
     count = 0
     for idx in range(len(param_info) + 1):
         plt.axvline(count, color='w', linestyle='-', linewidth=2)
@@ -81,5 +81,6 @@ if __name__ == '__main__':
         plt.axvline(idx, color='w', linestyle='--', linewidth=1)
         plt.axhline(idx, color='w', linestyle='--', linewidth=1)
 
+    plt.tight_layout()
     plt.savefig(savename)
     plt.show()

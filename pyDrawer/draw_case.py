@@ -44,7 +44,7 @@ if __name__ == '__main__':
     plt.plot(x, y, 'r-', lw=2, alpha=0.5, label=r"$y=ax^2+bx+c$")
 
     # points
-    points = read_points("/home/csl/CppWorks/artwork/ceres-utils/src/output/points.txt")
+    points = read_points("/output/points.txt")
     plt.scatter([elem[0] for elem in points], [elem[1] for elem in points],
                 marker='o', c='g', alpha=0.5, label=r"points")
 
