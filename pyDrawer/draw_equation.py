@@ -4,9 +4,11 @@ import numpy as np
 
 filename = '../output/equation_before.json'
 savename = '../img/equation_before.png'
+# filename = '/home/csl/ros_ws/LIC-Calib/src/lic_calib/output/data_sim2/lm_equ_graph/batch_opt_0.json'
+# savename = '../img/batch_opt_0_equation.png'
 
 # ['PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu', 'RdYlBu', 'RdYlGn', 'Spectral', 'coolwarm', 'bwr', 'seismic']
-color_name = 'PiYG'
+color_name = 'coolwarm'
 
 # setting
 config = {
@@ -39,7 +41,7 @@ def read_equation(filename):
 
 if __name__ == '__main__':
     plt.rcParams.update(config)
-    plt.rcParams['figure.figsize'] = (19.0, 10)
+    plt.rcParams['figure.figsize'] = (12.0, 10)
     [h_matrix, b_vector, param_info] = read_equation(filename)
 
     # construct the equation
@@ -70,16 +72,16 @@ if __name__ == '__main__':
 
     plt.pcolormesh(np.array(equation), cmap=color_name, vmin=-val_max, vmax=val_max)
     plt.colorbar()
-    count = 0
-    for idx in range(len(param_info) + 1):
-        plt.axvline(count, color='w', linestyle='-', linewidth=2)
-        plt.axhline(count, color='w', linestyle='-', linewidth=2)
-        if idx == len(param_info):
-            continue
-        count += param_info[idx][1]
-    for idx in range(len(h_matrix)):
-        plt.axvline(idx, color='w', linestyle='--', linewidth=1)
-        plt.axhline(idx, color='w', linestyle='--', linewidth=1)
+    # count = 0
+    # for idx in range(len(param_info) + 1):
+    #     plt.axvline(count, color='w', linestyle='-', linewidth=2)
+    #     plt.axhline(count, color='w', linestyle='-', linewidth=2)
+    #     if idx == len(param_info):
+    #         continue
+    #     count += param_info[idx][1]
+    # for idx in range(len(h_matrix)):
+    #     plt.axvline(idx, color='w', linestyle='--', linewidth=1)
+    #     plt.axhline(idx, color='w', linestyle='--', linewidth=1)
 
     plt.tight_layout()
     plt.savefig(savename)

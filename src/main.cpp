@@ -2,8 +2,6 @@
 // Created by csl on 1/27/23.
 //
 
-#include <utility>
-
 #include "ceres-utils/equations.h"
 #include "random"
 #include "chrono"
@@ -60,7 +58,7 @@ struct Utils {
 };
 
 
-int main(int argc, char **argv) {
+int main() {
     // fitting
     double ab[2] = {0.5, 10}, c = -5;
     auto points = Utils::GeneratePoints(ab[0], ab[1], c, 3.0);
@@ -114,7 +112,7 @@ int main(int argc, char **argv) {
             "/home/csl/CppWorks/artwork/ceres-utils/src/output/equation_after.json"
     ).SaveResiduals<FittingCostFunctor>(
             "/home/csl/CppWorks/artwork/ceres-utils/src/output/residuals_after.json"
-    );;
+    );
     //-------------
     return 0;
 }

@@ -87,18 +87,17 @@ namespace ns_ceres_utils {
         _bVecEchelonForm = hMatBar.topRightCorner(_hMat.rows(), 1);
     }
 
-    const Equation &Equation::SaveEquationToDisk(const std::string &filepath, int precision, bool echelonForm) const {
+    const Equation &Equation::SaveEquationToDisk(const std::string &filepath, bool echelonForm) const {
         if (echelonForm) {
-            return SaveEquationToDisk(filepath, precision, _hMatEchelonForm, _bVecEchelonForm);
+            return SaveEquationToDisk(filepath, _hMatEchelonForm, _bVecEchelonForm);
         } else {
-            return SaveEquationToDisk(filepath, precision, _hMat, _bVec);
+            return SaveEquationToDisk(filepath, _hMat, _bVec);
         }
     }
 
-    const Equation &Equation::SaveEquationToDisk(const std::string &filepath, int precision,
+    const Equation &Equation::SaveEquationToDisk(const std::string &filepath,
                                                  const Eigen::MatrixXd &hMat, const Eigen::VectorXd &bVec) const {
         std::ofstream file(filepath, std::ios::out);
-        file << std::setprecision(precision);
         cereal::JSONOutputArchive ar(file);
         ar.setNextName("param_blocks");
         ar.startNode();

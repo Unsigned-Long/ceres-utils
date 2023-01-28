@@ -6,9 +6,9 @@ Extension of ceres library for visualization of process information, such as nor
 
 ## Example
 
-<div align=center><img src="./img/parabolic_fitting.png" width =60%></div>
+<div align=center><img src="./img/parabolic_fitting.png" width =50%><img src="./img/equation_before.png" width =50%></div>
 
-<div align=center><img src="./img/equation_before.png" width =60%></div>
+<div align=center><img src="./img/batch_opt_0_equation.png" width =50%><img src="./img/batch_opt_3_equation.png" width =50%></div>
 
 
 

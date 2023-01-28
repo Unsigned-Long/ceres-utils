@@ -62,13 +62,12 @@ namespace ns_ceres_utils {
                  const std::vector<std::pair<std::string, std::size_t>> &paramDesc,
                  const std::map<std::size_t, aligned_vector<Eigen::VectorXd>> &residualsMap);
 
-        [[nodiscard]] const Equation &
-        SaveEquationToDisk(const std::string &filepath, int precision = 3, bool echelonForm = false) const;
+        [[nodiscard]] const Equation &SaveEquationToDisk(const std::string &filepath, bool echelonForm = false) const;
 
         [[nodiscard]] Eigen::VectorXd ZeroSpace() const;
 
         template<class CostFunctor>
-        [[nodiscard]]const Equation &SaveResiduals(const std::string &filepath, int precision = 3) const {
+        [[nodiscard]]const Equation &SaveResiduals(const std::string &filepath) const {
             if (auto errors = GetResiduals<CostFunctor>();errors) {
                 aligned_vector<Eigen::VectorXd> residuals = *errors;
                 std::ofstream file(filepath, std::ios::out);
@@ -84,8 +83,7 @@ namespace ns_ceres_utils {
 
     protected:
         [[nodiscard]] const Equation &
-        SaveEquationToDisk(const std::string &filepath, int precision,
-                           const Eigen::MatrixXd &hMat, const Eigen::VectorXd &bVec) const;
+        SaveEquationToDisk(const std::string &filepath, const Eigen::MatrixXd &hMat, const Eigen::VectorXd &bVec) const;
 
         template<class CostFunctor>
         [[nodiscard]] std::optional<aligned_vector<Eigen::VectorXd>> GetResiduals() const {
