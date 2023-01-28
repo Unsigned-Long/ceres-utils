@@ -26,6 +26,11 @@ namespace ns_ceres_utils {
     using aligned_unordered_map = std::unordered_map<K, V, std::hash<K>, std::equal_to<K>,
             Eigen::aligned_allocator<std::pair<K const, V>>>;
 
+    /**
+     * @tparam EigenVectorType
+     * @param eigenVec the eigen vector object
+     * @return the stl vector object
+     */
     template<typename EigenVectorType>
     inline auto EigenVecToVector(const EigenVectorType &eigenVec) {
         std::vector<typename EigenVectorType::Scalar> vec(eigenVec.rows());
@@ -35,6 +40,11 @@ namespace ns_ceres_utils {
         return vec;
     }
 
+    /**
+     * @tparam EigenMatrixType
+     * @param mat the eigen matrix
+     * @return the stl 2d vector object
+     */
     template<typename EigenMatrixType>
     inline auto EigenMatToVector(const EigenMatrixType &mat) {
         std::vector<std::vector<typename EigenMatrixType::Scalar>> vec(
@@ -48,7 +58,13 @@ namespace ns_ceres_utils {
         return vec;
     }
 
-
+    /**
+     * @tparam ScaleType
+     * @tparam M the rows
+     * @tparam N the cols
+     * @param mat the eigen matrix
+     * @return the reduced row echelon form
+     */
     template<typename ScaleType, int M, int N>
     Eigen::Matrix<ScaleType, M, N> ReducedRowEchelonForm(const Eigen::Matrix<ScaleType, M, N> &mat) {
         Eigen::Matrix<ScaleType, M, N> rMat = mat;

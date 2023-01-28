@@ -188,7 +188,8 @@ namespace ns_ceres_utils {
     }
 
     Equation
-    Evaluator::Evaluate(const std::initializer_list<std::map<const double *, std::string>> &targetParamsInfoMaps) {
+    Evaluator::Evaluate(
+            const std::initializer_list<std::map<const double *, std::string>> &targetParamsInfoMaps) {
 
         std::map<const double *, std::string> targetParamsInfoMap;
         for (const auto &item: targetParamsInfoMaps) {

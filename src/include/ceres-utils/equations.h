@@ -62,10 +62,20 @@ namespace ns_ceres_utils {
                  const std::vector<std::pair<std::string, std::size_t>> &paramDesc,
                  const std::map<std::size_t, aligned_vector<Eigen::VectorXd>> &residualsMap);
 
+        /**
+         * @param filepath the file path to save equation
+         * @param echelonForm whether save echelon-form equation
+         * @return *this
+         */
         [[nodiscard]] const Equation &SaveEquationToDisk(const std::string &filepath, bool echelonForm = false) const;
 
         [[nodiscard]] Eigen::VectorXd ZeroSpace() const;
 
+        /**
+         * @tparam CostFunctor the ceres cost functor type
+         * @param filepath the file path to save residuals
+         * @return *this
+         */
         template<class CostFunctor>
         [[nodiscard]]const Equation &SaveResiduals(const std::string &filepath) const {
             if (auto errors = GetResiduals<CostFunctor>();errors) {
@@ -103,16 +113,30 @@ namespace ns_ceres_utils {
     public:
         explicit Evaluator(const std::vector<CeresFactor> &factors = {});
 
-        template<typename CostFunctor, int Stride = 4>
-        Evaluator &AddCostFunction(ceres::DynamicAutoDiffCostFunction<CostFunctor, Stride> *costFunc,
-                                   const std::vector<double *> &paramBlocks) {
+        /**
+         * @tparam CostFunctor the ceres cost functor type
+         * @param costFunc the cost function
+         * @param paramBlocks the parameter block vector
+         * @return *this
+         */
+        template<typename CostFunctor>
+        Evaluator &AddCostFunction(ceres::CostFunction *costFunc, const std::vector<double *> &paramBlocks) {
             _factors.emplace_back(costFunc, paramBlocks, typeid(CostFunctor).hash_code());
             return *this;
         }
 
+        /**
+         * @param targetParamsInfoMap the target parameters with [address, description] to evaluate
+         * @return the equation
+         */
         Equation Evaluate(const std::map<const double *, std::string> &targetParamsInfoMap);
 
-        Equation Evaluate(const std::initializer_list<std::map<const double *, std::string>> &targetParamsInfoMaps);
+        /**
+         * @param targetParamsInfoMap the target parameters with [address, description] to evaluate
+         * @return the equation
+         */
+        Equation
+        Evaluate(const std::initializer_list<std::map<const double *, std::string>> &targetParamsInfoMaps);
 
     };
 }

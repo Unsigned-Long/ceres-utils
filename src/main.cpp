@@ -81,7 +81,7 @@ int main() {
         problem.AddResidualBlock(costFunc, nullptr, {ab, &c});
         //-------------
         // use library
-        evaluator.AddCostFunction(costFunc, {ab, &c});
+        evaluator.AddCostFunction<FittingCostFunctor>(costFunc, {ab, &c});
         //-------------
     }
     //-------------
