@@ -1,3 +1,17 @@
 /cmake-build-debug
 .idea
 /build
+/cmake-build-release
+
+/docs/*.pdf
+/docs/*.dtmp
+/docs/*.bkp
+/docs/*.log
+/docs/*.out
+/docs/*.lof
+/docs/*.aux
+/docs/*.lot
+/docs/*.gz
+/docs/*.toc
+/docs/*.bbl
+/docs/*.blg

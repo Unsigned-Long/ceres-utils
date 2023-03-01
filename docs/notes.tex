@@ -1,0 +1,141 @@
+\documentclass[12pt, onecolumn]{article}
+
+% 引入相关的包
+\usepackage{amsmath, listings, fontspec, geometry, graphicx, ctex, color, subfigure, amsfonts, amssymb}
+\usepackage{multirow}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage[ruled]{algorithm2e}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=red,
+	citecolor=red,
+}
+
+% 设定页面的尺寸和比例
+\geometry{left = 1.5cm, right = 1.5cm, top = 1.5cm, bottom = 1.5cm}
+
+% 设定两栏之间的间距
+\setlength\columnsep{1cm}
+
+% 设定字体，为代码的插入作准备
+\newfontfamily\ubuntu{Ubuntu Mono}
+\newfontfamily\consolas{Consolas}
+
+% 头部信息
+\title{\normf{基于连续时间的LiDAR/Camera/IMU的时空标定方法}}
+\author{\normf{陈烁龙}}
+\date{\normf{\today}}
+
+% 代码块的风格设定
+\lstset{
+	language=C++,
+	basicstyle=\scriptsize\ubuntu,
+	keywordstyle=\textbf,
+	stringstyle=\itshape,
+	commentstyle=\itshape,
+	numberstyle=\scriptsize\ubuntu,
+	showstringspaces=false,
+	numbers=left,
+	numbersep=8pt,
+	tabsize=2,
+	frame=single,
+	framerule=1pt,
+	columns=fullflexible,
+	breaklines,
+	frame=shadowbox, 
+	backgroundcolor=\color[rgb]{0.97,0.97,0.97}
+}
+
+% 字体族的定义
+% \fangsong \songti \heiti \kaishu
+\newcommand\normf{\fangsong}
+\newcommand\boldf{\heiti}
+\newcommand\keywords[1]{\boldf{关键词：} \normf #1}
+
+\newcommand\liehat[1]{\left[ #1 \right]_\times}
+\newcommand\lievee[1]{\left[ #1 \right]^\vee}
+\newcommand\liehatvee[1]{\left[ #1 \right]^\vee_\times}
+
+\newcommand\mlcomment[1]{\iffalse #1 \fi}
+%\newcommand\mlcomment[1]{ #1 }
+
+\begin{document}
+	
+	% 插入头部信息
+	\maketitle
+	% 换页
+	\thispagestyle{empty}
+	\clearpage
+	
+	% 插入目录、图、表并换页
+	\pagenumbering{roman}
+	\tableofcontents
+	\newpage
+	\listoffigures
+	\newpage
+	\listoftables
+	% 罗马字母形式的页码
+	
+	\clearpage
+	% 从该页开始计数
+	\setcounter{page}{1}
+	% 阿拉伯数字形式的页码
+	\pagenumbering{arabic}
+	
+	\section{\normf{Sphere Manifold}}
+	\normf
+	Ceres中的$SphereManifold$提供了球面流形，球面上向量的范数保持不变。 这种情况经常出现，比如与IMU相关的多源融合定位中重力向量的估计。
+	
+	\subsection{\normf{Plus}}
+	\begin{equation}
+	\boldsymbol{x}\boxplus\delta\boldsymbol{x}=
+	\left( 
+	\sin\left( \frac{\left\| \delta\boldsymbol{x}\right\|}{2} \right) \cdot
+	\frac{\delta\boldsymbol{x}^T}{\left\| \delta\boldsymbol{x}\right\| }
+	\quad
+	\cos\left(  \frac{\left\| \delta\boldsymbol{x}\right\|}{2} \right) 
+	\right)^T  \cdot\left\| \boldsymbol{x}\right\| 
+	\end{equation}
+	
+	\subsection{\normf{Plus Jacobian}}
+	\begin{equation}
+	\boldsymbol{J}_{c(i)}=	-\frac{\left\| \boldsymbol{x}\right\| }{2}\cdot\beta\cdot\boldsymbol{v}_{(i)}\cdot\boldsymbol{v}+\frac{\left\| \boldsymbol{x}\right\|}{2}
+	\end{equation}
+	也即：
+	\begin{equation}
+	\boldsymbol{J}=\frac{1}{2}\cdot\boldsymbol{H}_{c(0:d)}
+	\end{equation}
+	
+	\subsection{\normf{Minus}}
+	\begin{equation}
+	\boldsymbol{x}\boxminus\boldsymbol{y}=
+	2\cdot\mathrm{atan}\left(\frac{\left\| \boldsymbol{y}^\prime \right\| }{\boldsymbol{y}^\prime_{(-1)}}\right) 
+	\cdot\frac{1}{\left\| \boldsymbol{y}^\prime \right\| }\cdot 
+	\boldsymbol{y}^\prime_{(0:d)}
+	\quad\mathrm{with}\quad\boldsymbol{y}^\prime=\boldsymbol{H}\cdot\boldsymbol{y} 
+	\end{equation}
+	
+	\subsection{\normf{Minus Jacobian}}
+	\begin{equation}
+	\boldsymbol{J}_{c(i)}=-\frac{2}{\left\| \boldsymbol{x}\right\|}\cdot\beta\cdot\boldsymbol{v}_{(i)}\cdot\boldsymbol{v}+
+	\frac{2}{\left\| \boldsymbol{x}\right\|}
+	\end{equation}
+	也即：
+	\begin{equation}
+	\boldsymbol{J}=2\cdot\boldsymbol{H}_{c(0:d)}
+	\end{equation}
+	
+	\subsection{\normf{Householder Vector}}
+	对于输入的向量$\boldsymbol{x}$，使用其最后一个元素作为主元(而不是第一个)。$\boldsymbol{v}$的householder变换:
+	\begin{equation}
+	\boldsymbol{H}=\boldsymbol{I}-\beta\cdot\boldsymbol{v}\cdot\boldsymbol{v}^T
+	\end{equation}
+	该householder变换矩阵作用于向量时，会以与$\boldsymbol{v}$正交的平面作为“镜面”，将向量进行反射：
+	\begin{equation}
+	\boldsymbol{H}\cdot\boldsymbol{x}=\boldsymbol{x}^\prime
+	\end{equation}
+	比如，直接作用于$\boldsymbol{v}$，会得到$-\boldsymbol{v}$;作用于与$\boldsymbol{v}$正交的向量$\boldsymbol{u},\boldsymbol{u}^T\cdot\boldsymbol{v}=0$，则仍然保持$\boldsymbol{u}$不变。
+	
+\end{document}
+

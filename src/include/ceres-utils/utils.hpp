@@ -13,6 +13,30 @@ namespace ns_ceres_utils {
     // eigen
 
     template<typename T>
+    using Vector1 = Eigen::Matrix<T, 1, 1, 0>;
+
+    template<typename T>
+    using Vector2 = Eigen::Matrix<T, 2, 1>;
+
+    template<typename T>
+    using Vector3 = Eigen::Matrix<T, 3, 1>;
+
+    template<typename T>
+    using Vector6 = Eigen::Matrix<T, 6, 1>;
+
+    template<typename T>
+    using Vector9 = Eigen::Matrix<T, 9, 1>;
+
+    template<typename T>
+    using Matrix1 = Eigen::Matrix<T, 1, 1>;
+
+    template<typename T>
+    using Matrix2 = Eigen::Matrix<T, 2, 2>;
+
+    template<typename T>
+    using Matrix3 = Eigen::Matrix<T, 3, 3>;
+
+    template<typename T>
     using aligned_vector = std::vector<T, Eigen::aligned_allocator<T>>;
 
     template<typename T>
