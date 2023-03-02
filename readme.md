@@ -10,5 +10,7 @@ Extension of ceres library for visualization of process information, such as nor
 
 <div align=center><img src="./img/batch_opt_0_equation.png" width =50%><img src="./img/batch_opt_3_equation.png" width =50%></div>
 
+<div align=center><img src="./img/sphere_opt.png" width =50%>
+
 
 
